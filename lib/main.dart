@@ -130,28 +130,69 @@ class ImageTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Card(
-      child: Column(
-        children: [
-          Image.network(imageData['webformatURL']),
-          Padding(
-            padding: const EdgeInsets.all(4.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Likes: ${imageData['likes']}',
-                  style: TextStyle(fontSize: 12),
-                ),
-                Text(
-                  'Views: ${imageData['views']}',
-                  style: TextStyle(fontSize: 12),
-                ),
-              ],
+    return GestureDetector(
+      onTap: () {
+        _openImageFullscreen(context, imageData['largeImageURL']);
+      },
+      child: Card(
+        child: Column(
+          children: [
+            Image.network(imageData['webformatURL']),
+            Padding(
+              padding: const EdgeInsets.all(4.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Likes: ${imageData['likes']}',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                  Text(
+                    'Views: ${imageData['views']}',
+                    style: TextStyle(fontSize: 12),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
+
+  void _openImageFullscreen(BuildContext context, String imageUrl) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        // Close the dialog after 5 seconds
+        // Future.delayed(Duration(seconds: 10), () {
+        //   Navigator.of(context).pop();
+        // });
+
+        return Dialog(
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              InteractiveViewer(
+                child: Image.network(imageUrl),
+                minScale: 0.5,
+                maxScale: 2.0,
+              ),
+              Positioned(
+                top: 10,
+                right: 10,
+                child: IconButton(
+                  icon: Icon(Icons.close, color: Colors.white),
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ),
+            ],
+          ),
+        );
+      },
+    );
+  }
 }
+
