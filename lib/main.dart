@@ -4,14 +4,14 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
-/// Entry point of the application.
+// Entry point of the application.
 Future<void> main() async {
   // Uncomment the following line to load environment variables from the .env file.
   // await dotenv.load(fileName: ".env");
   runApp(PixabayGalleryApp());
 }
 
-/// The main application widget for Pixabay Gallery.
+// The main application widget for Pixabay Gallery.
 class PixabayGalleryApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -25,7 +25,7 @@ class PixabayGalleryApp extends StatelessWidget {
   }
 }
 
-/// Stateful widget to display a grid of images fetched from the Pixabay API.
+// Stateful widget to display a grid of images fetched from the Pixabay API.
 class ImageGalleryScreen extends StatefulWidget {
   @override
   _ImageGalleryScreenState createState() => _ImageGalleryScreenState();
@@ -51,7 +51,7 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
     });
   }
 
-  /// Fetches images from the Pixabay API and updates the state.
+  // Fetches images from the Pixabay API and updates the state.
   Future<void> _fetchImages() async {
     if (isLoading) return;
 
@@ -107,7 +107,7 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
     );
   }
 
-  /// Determines the number of columns for the grid based on the screen width.
+  // Determines the number of columns for the grid based on the screen width.
   int _getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     if (width > 1200) return 5; // Desktop layout
@@ -122,7 +122,7 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
   }
 }
 
-/// Widget to display individual image details in a grid tile.
+// Widget to display individual image details in a grid tile.
 class ImageTile extends StatelessWidget {
   final dynamic imageData;
 
@@ -160,7 +160,7 @@ class ImageTile extends StatelessWidget {
     );
   }
 
-  /// Opens the image in fullscreen mode with an option to zoom in/out.
+  // Opens the image in fullscreen mode with an option to zoom in/out.
   void _openImageFullscreen(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
