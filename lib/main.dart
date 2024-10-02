@@ -4,12 +4,14 @@ import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 
+/// Entry point of the application.
 Future<void> main() async {
+  // Uncomment the following line to load environment variables from the .env file.
   // await dotenv.load(fileName: ".env");
   runApp(PixabayGalleryApp());
 }
 
-//  Entry point of the Pixabay Gallery Application.
+/// The main application widget for Pixabay Gallery.
 class PixabayGalleryApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -23,7 +25,7 @@ class PixabayGalleryApp extends StatelessWidget {
   }
 }
 
-/// Screen displaying a grid of images loaded from Pixabay.
+/// Stateful widget to display a grid of images fetched from the Pixabay API.
 class ImageGalleryScreen extends StatefulWidget {
   @override
   _ImageGalleryScreenState createState() => _ImageGalleryScreenState();
@@ -35,12 +37,12 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
   bool isLoading = false;
   final ScrollController _scrollController = ScrollController();
 
- 
-
   @override
   void initState() {
     super.initState();
     _fetchImages();
+
+    // Adding scroll listener to trigger fetch when at the bottom of the list.
     _scrollController.addListener(() {
       if (_scrollController.position.pixels ==
           _scrollController.position.maxScrollExtent) {
@@ -49,7 +51,7 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
     });
   }
 
-  /// Fetches images from the Pixabay API.
+  /// Fetches images from the Pixabay API and updates the state.
   Future<void> _fetchImages() async {
     if (isLoading) return;
 
@@ -57,9 +59,8 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
       isLoading = true;
     });
 
-   final response = await http.get(Uri.parse(
-    'https://pixabay.com/api/?key=46300711-6d7b7b666eb36969bf4f66970&image_type=photo&pretty=true&page=$page&per_page=20'));
-
+    final response = await http.get(Uri.parse(
+        'https://pixabay.com/api/?key=46300711-6d7b7b666eb36969bf4f66970&image_type=photo&pretty=true&page=$page&per_page=20'));
 
     if (response.statusCode == 200) {
       final data = json.decode(response.body);
@@ -87,12 +88,11 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
                 Expanded(
                   child: MasonryGridView.count(
                     controller: _scrollController,
-                    crossAxisCount: getCrossAxisCount(context),
+                    crossAxisCount: _getCrossAxisCount(context),
                     itemCount: images.length,
                     itemBuilder: (context, index) {
                       return ImageTile(imageData: images[index]);
                     },
-                   
                     mainAxisSpacing: 4.0,
                     crossAxisSpacing: 4.0,
                   ),
@@ -107,12 +107,12 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
     );
   }
 
-  /// Determines the number of columns based on screen width.
-  int getCrossAxisCount(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
-    if (width > 1200) return 5; // Desktop
-    if (width > 800) return 4;  // Tablet
-    return 2; // Mobile
+  /// Determines the number of columns for the grid based on the screen width.
+  int _getCrossAxisCount(BuildContext context) {
+    final width = MediaQuery.of(context).size.width;
+    if (width > 1200) return 5; // Desktop layout
+    if (width > 800) return 4;  // Tablet layout
+    return 2; // Mobile layout
   }
 
   @override
@@ -122,7 +122,7 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
   }
 }
 
-/// Widget displaying individual image details.
+/// Widget to display individual image details in a grid tile.
 class ImageTile extends StatelessWidget {
   final dynamic imageData;
 
@@ -160,15 +160,11 @@ class ImageTile extends StatelessWidget {
     );
   }
 
+  /// Opens the image in fullscreen mode with an option to zoom in/out.
   void _openImageFullscreen(BuildContext context, String imageUrl) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
-        // Close the dialog after 5 seconds
-        // Future.delayed(Duration(seconds: 10), () {
-        //   Navigator.of(context).pop();
-        // });
-
         return Dialog(
           child: Stack(
             alignment: Alignment.center,
@@ -195,4 +191,3 @@ class ImageTile extends StatelessWidget {
     );
   }
 }
-
