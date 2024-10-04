@@ -20,8 +20,15 @@ class PixabayGalleryApp extends StatelessWidget {
     return MaterialApp(
       title: 'Pixabay Gallery',
       theme: ThemeData(
+        brightness: Brightness.light,
         primarySwatch: Colors.blue,
       ),
+      darkTheme: ThemeData(
+        brightness: Brightness.dark,
+        primarySwatch: Colors.blueGrey,
+      ),
+      themeMode:
+          ThemeMode.system, // Automatically switch based on system setting
       home: ImageGalleryScreen(),
     );
   }
@@ -81,30 +88,46 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Pixabay Gallery'),
+        title: Text(
+          'Pixabay Gallery',
+          style: TextStyle(fontWeight: FontWeight.bold, fontSize: 24),
+        ),
+        backgroundColor: Colors.blueAccent,
+        elevation: 4.0,
       ),
       body: images.isEmpty
-          ? Center(child: CircularProgressIndicator())
+          ? Center(
+              child: CircularProgressIndicator(
+              valueColor: AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+              strokeWidth: 4.0,
+            ))
           : Column(
               children: [
                 Expanded(
                   child: MasonryGridView.count(
-                   
-
+                    padding: const EdgeInsets.all(8.0), // Add padding
                     controller: _scrollController,
                     crossAxisCount: _getCrossAxisCount(context),
                     itemCount: images.length,
                     itemBuilder: (context, index) {
-                      return ImageTile(imageData: images[index]);
+                      return Padding(
+                        padding:
+                            const EdgeInsets.all(4.0), // Spacing between items
+                        child: ImageTile(imageData: images[index]),
+                      );
                     },
-                    mainAxisSpacing: 4.0,
-                    crossAxisSpacing: 4.0,
+                    mainAxisSpacing: 8.0, // More spacing between grid items
+                    crossAxisSpacing: 8.0,
                   ),
                 ),
                 if (isLoading)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: CircularProgressIndicator(),
+                    child: CircularProgressIndicator(
+                      valueColor:
+                          AlwaysStoppedAnimation<Color>(Colors.blueAccent),
+                      strokeWidth: 4.0,
+                    ),
                   ),
               ],
             ),
@@ -115,7 +138,7 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
   int _getCrossAxisCount(BuildContext context) {
     final width = MediaQuery.of(context).size.width;
     if (width > 1200) return 5; // Desktop layout
-    if (width > 800) return 4;  // Tablet layout
+    if (width > 800) return 4; // Tablet layout
     return 2; // Mobile layout
   }
 
@@ -139,83 +162,81 @@ class ImageTile extends StatelessWidget {
         _openImageFullscreen(context, imageData['largeImageURL']);
       },
       child: Card(
-        child: Column(
-          children: [
-            Image.network(imageData['webformatURL']),
-            Padding(
-              padding: const EdgeInsets.all(4.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text(
-                    'Likes: ${imageData['likes']}',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                  Text(
-                    'Views: ${imageData['views']}',
-                    style: TextStyle(fontSize: 12),
-                  ),
-                ],
+        elevation: 2.0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(15.0),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(15.0),
+          child: Column(
+            children: [
+              Image.network(imageData['webformatURL']),
+              Padding(
+                padding: const EdgeInsets.all(4.0),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text(
+                      'Likes: ${imageData['likes']}',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                    Text(
+                      'Views: ${imageData['views']}',
+                      style: TextStyle(fontSize: 12),
+                    ),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
   }
 
+  void _openImageFullscreen(BuildContext context, String imageUrl) {
+    if (kIsWeb) {
+      // Request full-screen mode in the browser
+      html.document.documentElement?.requestFullscreen();
+    }
 
-
-
-void _openImageFullscreen(BuildContext context, String imageUrl) {
-  if (kIsWeb) {
-    // Request full-screen mode in the browser
-    html.document.documentElement?.requestFullscreen();
-  }
-
-  Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (BuildContext context) {
-        return Scaffold(
-          backgroundColor: Colors.black,
-          body: Stack(
-            children: [
-              InteractiveViewer(
-                child: Image.network(
-                  imageUrl,
-                  fit: BoxFit.cover,
-                  width: double.infinity,
-                  height: double.infinity,
+    Navigator.push(
+      context,
+      PageRouteBuilder(
+        pageBuilder: (context, animation, secondaryAnimation) => FadeTransition(
+          opacity: animation,
+          child: Scaffold(
+            backgroundColor: Colors.black,
+            body: Stack(
+              children: [
+                InteractiveViewer(
+                  child: Image.network(
+                    imageUrl,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                    height: double.infinity,
+                  ),
+                  minScale: 0.5,
+                  maxScale: 2.0,
                 ),
-                minScale: 0.5,
-                maxScale: 2.0,
-              ),
-              Positioned(
-                top: 40,
-                right: 10,
-                child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white, size: 30),
-                  onPressed: () {
-                    if (kIsWeb) {
-                      // Exit full-screen mode in the browser
-                      html.document.exitFullscreen();
-                      Navigator.of(context).pop(); // Close the full-screen view
-                    } else {
-                      Navigator.of(context).pop(); // Close the full-screen view for non-web platforms
-                    }
-                  },
+                Positioned(
+                  top: 40,
+                  right: 10,
+                  child: IconButton(
+                    icon: Icon(Icons.close, color: Colors.white, size: 30),
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                  ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        );
-      },
-    ),
-  );
-}
-
-
-
-
+        ),
+        transitionsBuilder: (context, animation, secondaryAnimation, child) {
+          return FadeTransition(opacity: animation, child: child);
+        },
+      ),
+    );
+  }
 }
