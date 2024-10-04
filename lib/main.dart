@@ -87,6 +87,8 @@ class _ImageGalleryScreenState extends State<ImageGalleryScreen> {
               children: [
                 Expanded(
                   child: MasonryGridView.count(
+                   
+
                     controller: _scrollController,
                     crossAxisCount: _getCrossAxisCount(context),
                     itemCount: images.length,
@@ -160,27 +162,32 @@ class ImageTile extends StatelessWidget {
     );
   }
 
-  // Opens the image in fullscreen mode with an option to zoom in/out.
-  void _openImageFullscreen(BuildContext context, String imageUrl) {
-    showDialog(
-      context: context,
+void _openImageFullscreen(BuildContext context, String imageUrl) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
       builder: (BuildContext context) {
-        return Dialog(
-          child: Stack(
-            alignment: Alignment.center,
+        return Scaffold(
+          backgroundColor: Colors.black,
+          body: Stack(
             children: [
               InteractiveViewer(
-                child: Image.network(imageUrl),
+                child: Image.network(
+                  imageUrl,
+                  fit: BoxFit.cover, // Ensures the image covers the full screen
+                  width: double.infinity,
+                  height: double.infinity,
+                ),
                 minScale: 0.5,
                 maxScale: 2.0,
               ),
               Positioned(
-                top: 10,
+                top: 40,
                 right: 10,
                 child: IconButton(
-                  icon: Icon(Icons.close, color: Colors.white),
+                  icon: Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () {
-                    Navigator.of(context).pop();
+                    Navigator.of(context).pop(); // Close fullscreen and go back
                   },
                 ),
               ),
@@ -188,6 +195,9 @@ class ImageTile extends StatelessWidget {
           ),
         );
       },
-    );
-  }
+    ),
+  );
+}
+
+
 }
