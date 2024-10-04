@@ -222,11 +222,34 @@ class ImageTile extends StatelessWidget {
                 Positioned(
                   top: 40,
                   right: 10,
-                  child: IconButton(
-                    icon: Icon(Icons.close, color: Colors.white, size: 30),
-                    onPressed: () {
+                  child: GestureDetector(
+                    onTap: () {
+                      if (kIsWeb) {
+                        html.document.exitFullscreen();
+                      }
                       Navigator.of(context).pop();
                     },
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.blue, // Solid blue background
+                        shape: BoxShape.circle, // Circular shape
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2), // Soft shadow
+                            spreadRadius: 1,
+                            blurRadius: 6,
+                            offset: Offset(0, 2), // Shadow position
+                          ),
+                        ],
+                      ),
+                      padding:
+                          EdgeInsets.all(8.0), // Padding inside the container
+                      child: Icon(
+                        Icons.close,
+                        color: Colors.white, // White icon color
+                        size: 24, // Slightly smaller size to fit the design
+                      ),
+                    ),
                   ),
                 ),
               ],
