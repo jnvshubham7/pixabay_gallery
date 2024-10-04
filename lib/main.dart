@@ -1,8 +1,10 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_staggered_grid_view/flutter_staggered_grid_view.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'dart:html' as html; // Import for web-specific full-screen API
 
 // Entry point of the application.
 Future<void> main() async {
@@ -162,7 +164,15 @@ class ImageTile extends StatelessWidget {
     );
   }
 
+
+
+
 void _openImageFullscreen(BuildContext context, String imageUrl) {
+  if (kIsWeb) {
+    // Request full-screen mode in the browser
+    html.document.documentElement?.requestFullscreen();
+  }
+
   Navigator.push(
     context,
     MaterialPageRoute(
@@ -174,7 +184,7 @@ void _openImageFullscreen(BuildContext context, String imageUrl) {
               InteractiveViewer(
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.cover, 
+                  fit: BoxFit.cover,
                   width: double.infinity,
                   height: double.infinity,
                 ),
@@ -187,7 +197,13 @@ void _openImageFullscreen(BuildContext context, String imageUrl) {
                 child: IconButton(
                   icon: Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () {
-                    Navigator.of(context).pop(); 
+                    if (kIsWeb) {
+                      // Exit full-screen mode in the browser
+                      html.document.exitFullscreen();
+                      Navigator.of(context).pop(); // Close the full-screen view
+                    } else {
+                      Navigator.of(context).pop(); // Close the full-screen view for non-web platforms
+                    }
                   },
                 ),
               ),
@@ -198,6 +214,8 @@ void _openImageFullscreen(BuildContext context, String imageUrl) {
     ),
   );
 }
+
+
 
 
 }
