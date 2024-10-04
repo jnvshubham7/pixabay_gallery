@@ -3,8 +3,8 @@
 # Pixabay Gallery
 
 
+![image](https://github.com/user-attachments/assets/cac73077-1984-4643-9483-06932ac2f451)
 
-![image](https://github.com/user-attachments/assets/d476f4b1-77ef-4789-b3bd-e08e3106bf93)
 
 
 ## Live Deployment
