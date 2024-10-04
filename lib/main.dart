@@ -174,7 +174,7 @@ void _openImageFullscreen(BuildContext context, String imageUrl) {
               InteractiveViewer(
                 child: Image.network(
                   imageUrl,
-                  fit: BoxFit.cover, // Ensures the image covers the full screen
+                  fit: BoxFit.cover, 
                   width: double.infinity,
                   height: double.infinity,
                 ),
@@ -187,7 +187,7 @@ void _openImageFullscreen(BuildContext context, String imageUrl) {
                 child: IconButton(
                   icon: Icon(Icons.close, color: Colors.white, size: 30),
                   onPressed: () {
-                    Navigator.of(context).pop(); // Close fullscreen and go back
+                    Navigator.of(context).pop(); 
                   },
                 ),
               ),
